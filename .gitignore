@@ -1,0 +1,39 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+out/
+logs/
+log/
+hs_err_pid*
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Spring Boot ###
+*.log
+.env
+application-*.yml
+application-*.properties
+.envrc
+data/
+
+### OS-Specific ###
+.DS_Store
+Thumbs.db
