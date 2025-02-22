@@ -183,10 +183,16 @@ button[type="submit"] {
   cursor: pointer;
   display: flex;
   align-items: center;
+  color: black;
+  transition: all 0.3s ease;
+  -webkit-text-stroke: 0px black;
 }
 
 .icon:hover {
-  color: #007BFF;  /* Cambia el color del ícono al pasar el ratón por encima */
+  color: white;
+  -webkit-text-stroke: 3px black;
+  stroke: black;
+  stroke-width: 30;
 }
 
 /* Estilo para el contenedor principal */
@@ -435,7 +441,6 @@ button[type="submit"]:hover {
   background-color: white !important;
   border: 2px solid black !important;
   color: black !important;
-  border-radius: 4px !important;
 }
 
 .tab-button:hover, .tab-button.active {
@@ -460,7 +465,6 @@ button[type="submit"]:hover {
   background-color: black !important;
   border-color: black !important;
   color: white !important;
-  border-radius: 4px !important;
 }
 
 .btn-primary:hover {
@@ -472,7 +476,6 @@ button[type="submit"]:hover {
   background-color: white !important;
   border-color: black !important;
   color: black !important;
-  border-radius: 4px !important;
 }
 
 .btn-secondary:hover {
@@ -485,7 +488,6 @@ button[type="submit"]:hover {
   background-color: black !important;
   border-color: black !important;
   color: white !important;
-  border-radius: 4px !important;
 }
 
 .btn-warning:hover {
@@ -496,13 +498,11 @@ button[type="submit"]:hover {
 .btn-dark {
   background-color: black !important;
   border-color: black !important;
-  border-radius: 4px !important;
 }
 
 .btn-outline-dark {
   border-color: black !important;
   color: black !important;
-  border-radius: 4px !important;
 }
 
 .btn-outline-dark:hover {

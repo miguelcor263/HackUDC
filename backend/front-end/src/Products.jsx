@@ -6,8 +6,14 @@ import "./Products.css";
 export default function Products() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(location.state?.products || []);
   const [favorites, setFavorites] = useState(new Set());
+  const userState = {
+    isLoggedIn: location.state?.isLoggedIn,
+    userId: location.state?.userId,
+    userName: location.state?.userName,
+    userEmail: location.state?.userEmail
+  };
 
   useEffect(() => {
     // If products were passed through navigation
@@ -43,6 +49,13 @@ export default function Products() {
     });
   };
 
+  const handleBack = () => {
+    navigate('/home', { 
+      state: userState,
+      replace: true 
+    });
+  };
+
   return (
     <div className="products-container">
       <div className="products-header">
@@ -69,7 +82,7 @@ export default function Products() {
         ))}
       </div>
 
-      <button className="btn btn-secondary mt-3" onClick={() => navigate('/home')}>
+      <button className="btn btn-secondary mt-3" onClick={handleBack}>
         Volver al inicio
       </button>
     </div>

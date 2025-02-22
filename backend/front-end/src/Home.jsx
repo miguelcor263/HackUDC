@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaHeart, FaUser } from "react-icons/fa"; 
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Home.css";
 import video from "../images/stradi_video.mp4";
-import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [showPrompt, setShowPrompt] = useState(false);
@@ -14,8 +14,38 @@ export default function Home() {
   const [userData, setUserData] = useState({ name: "", password: "" });
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
+  const [userId, setUserId] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Inicializar estados desde localStorage o location.state
+  useEffect(() => {
+    const storedLogin = localStorage.getItem('isLoggedIn') === 'true';
+    const storedUserId = localStorage.getItem('userId');
+    const storedUserName = localStorage.getItem('userName');
+    const storedUserEmail = localStorage.getItem('userEmail');
+
+    if (location.state?.products) {
+      // Si venimos de la página de productos, usar esos datos
+      setIsLoggedIn(location.state.isLoggedIn);
+      setUserId(location.state.userId);
+      setUserName(location.state.userName);
+      setUserEmail(location.state.userEmail);
+      
+      // Actualizar localStorage
+      localStorage.setItem('isLoggedIn', location.state.isLoggedIn);
+      localStorage.setItem('userId', location.state.userId);
+      localStorage.setItem('userName', location.state.userName);
+      localStorage.setItem('userEmail', location.state.userEmail);
+    } else if (storedLogin) {
+      // Si no venimos de productos pero hay datos en localStorage, usarlos
+      setIsLoggedIn(storedLogin);
+      setUserId(storedUserId);
+      setUserName(storedUserName);
+      setUserEmail(storedUserEmail);
+    }
+  }, [location]);
 
   const sendImageToBackend = async (url) => {
     try {
@@ -41,7 +71,15 @@ export default function Home() {
         console.log("Products found:", data);
         
         if (data && data.length > 0) {
-            navigate('/products', { state: { products: data } });
+            navigate('/products', { 
+              state: { 
+                products: data,
+                isLoggedIn: isLoggedIn,
+                userId: userId,
+                userName: userName,
+                userEmail: userEmail
+              } 
+            });
         } else {
             alert("No similar products found");
         }
@@ -63,7 +101,64 @@ export default function Home() {
   };
 
 
-  const handleHeartClick = () => alert("You like the app!");
+  const handleHeartClick = async () => {
+    if (!isLoggedIn || !userId) {
+      alert("Please login to view favorites!");
+      setShowLoginForm(true);
+      return;
+    }
+  
+    try {
+      // Paso 1: Obtener los IDs de productos favoritos
+      const favoritesResponse = await fetch(`http://localhost:8080/api/favorite/user/${userId}`);
+      if (!favoritesResponse.ok) {
+        throw new Error(`Error fetching favorites: ${favoritesResponse.status}`);
+      }
+      const favorites = await favoritesResponse.json();
+      const favoriteIds = favorites.map(fav => fav.productId); // Extraer los product_ids
+  
+      if (favoriteIds.length === 0) {
+        navigate('/favorites', { 
+          state: { 
+            products: [],
+            isLoggedIn: isLoggedIn,
+            userId: userId,
+            userName: userName,
+            userEmail: userEmail
+          } 
+        });
+        return;
+      }
+  
+      // Paso 2: Obtener los detalles de cada producto favorito
+      const productsResponse = await fetch('http://localhost:8080/api/products/ids', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(favoriteIds)
+      });
+  
+      if (!productsResponse.ok) {
+        throw new Error(`Error fetching product details: ${productsResponse.status}`);
+      }
+  
+      const favoriteProducts = await productsResponse.json();
+      
+      navigate('/favorites', { 
+        state: { 
+          products: favoriteProducts,
+          isLoggedIn: isLoggedIn,
+          userId: userId,
+          userName: userName,
+          userEmail: userEmail
+        } 
+      });
+    } catch (error) {
+      console.error("Error loading favorites:", error);
+      alert("Error loading favorites: " + error.message);
+    }
+  };
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
@@ -97,7 +192,14 @@ export default function Home() {
         setIsLoggedIn(true);
         setShowLoginForm(false);
         setUserName(user.username);
-        setUserEmail(user.email); // Guardar el email del usuario
+        setUserEmail(user.email);
+        setUserId(user.id);
+
+        // Guardar en localStorage
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userId', user.id);
+        localStorage.setItem('userName', user.username);
+        localStorage.setItem('userEmail', user.email);
       } else {
         alert("Invalid username or password");
       }
@@ -111,7 +213,15 @@ export default function Home() {
     setIsLoggedIn(false);
     setUserData({ name: "", password: "" });
     setUserName("");
+    setUserEmail("");
+    setUserId(null);
     setDrawerOpen(false);
+    
+    // Limpiar localStorage
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
   };
 
   const switchTab = (tab) => setActiveTab(tab);

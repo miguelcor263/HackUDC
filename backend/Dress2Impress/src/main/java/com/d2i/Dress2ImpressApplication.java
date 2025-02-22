@@ -20,7 +20,7 @@ public class Dress2ImpressApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(Dress2ImpressApplication.class, args);
 	}
-
+/*
 	@Bean
 	public CommandLineRunner demoData(
 			UserRepository userRepository,
@@ -57,4 +57,5 @@ public class Dress2ImpressApplication {
       favoriteList.forEach(product -> System.out.println(product));
 		};
 	}
+    */
 }
