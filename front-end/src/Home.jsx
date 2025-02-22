@@ -13,6 +13,7 @@ export default function App() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);  // Estado para controlar la visibilidad del drawer
 
   const navigate = useNavigate(); // Crea una instancia de navigate
 
@@ -97,19 +98,27 @@ export default function App() {
   };
 
   const handleUserClick = () => {
-    alert("Has hecho clic en las iniciales del usuario");
+    setDrawerOpen(true);
+  };
+  const handleCloseDrawer = () => {
+    setDrawerOpen(false);  // Cerrar el drawer
+  };
+
+  const handleLogout = () => {
+    alert("Has cerrado sesión");
+    // Aquí podrías manejar la lógica de cierre de sesión
   };
 
   return (
     <div className="container">
       {/* Barra superior */}
       <div className="navbar">
-        {/* Logo en la izquierda */}
-        <img src={logo} alt="Logo" className="logo" />
-        
         {/* Título de la aplicación */}
         <h1 className="app-title">DRESS2 IMPRESS</h1>
 
+        {/* Logo en la izquierda */}
+        <img src={logo} alt="Logo" className="logo" />
+        
         {/* Iconos a la derecha */}
         <div className="icons">
           <FaHeart 
@@ -125,6 +134,10 @@ export default function App() {
           </div>
         </div>
       </div>
+      <video width="90%" autoPlay muted loop>
+        <source src="images/stradi_video.mp4" type="video/mp4" />
+        Tu navegador no soporta el video.
+      </video>
 
       <h2>Subir Imagen 📸</h2>
 
@@ -137,6 +150,20 @@ export default function App() {
       <button className="upload-btn" onClick={() => setShowPrompt(true)}>
         Subir Imagen
       </button>
+      {/* Drawer con la información del usuario */}
+      {/* Drawer con la información del usuario */}
+      {drawerOpen && (
+        <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
+          <div className="drawer-content">
+            <button className="close-drawer-btn" onClick={handleCloseDrawer}>✕</button>
+            <h2>Información del Usuario</h2>
+            <p><strong>Nombre:</strong> {userName}</p>
+            <p><strong>Email:</strong> usuario@dominio.com</p>
+            <p><strong>Ubicación:</strong> Ciudad, País</p>
+            <button className="logout-btn" onClick={handleLogout}>Cerrar Sesión</button>
+          </div>
+        </div>
+      )}
 
       {/* Modal para elegir opción */}
       {showPrompt && (
