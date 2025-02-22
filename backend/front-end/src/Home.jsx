@@ -97,6 +97,34 @@ export default function Home() {
 
   const switchTab = (tab) => setActiveTab(tab);
 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/api/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: e.target.username.value,
+          password: e.target.password.value,
+          email: e.target.email.value,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Registro exitoso");
+        setActiveTab('login');
+      } else {
+        const error = await response.text();
+        alert("Error en el registro: " + error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error en el registro");
+    }
+  };
+
   return (
     <div className="container">
       {/* Navbar */}
@@ -206,17 +234,35 @@ export default function Home() {
             )}
 
             {activeTab === 'register' && (
-              <form>
+              <form onSubmit={handleRegister}>
                 <div className="mb-3">
-                  <input type="text" className="form-control" placeholder="Nombre de usuario" />
+                  <input 
+                    type="text" 
+                    name="username"
+                    className="form-control" 
+                    placeholder="Nombre de usuario" 
+                    required 
+                  />
                 </div>
                 <div className="mb-3">
-                  <input type="password" className="form-control" placeholder="Contraseña" />
+                  <input 
+                    type="password" 
+                    name="password"
+                    className="form-control" 
+                    placeholder="Contraseña" 
+                    required 
+                  />
                 </div>
                 <div className="mb-3">
-                  <input type="email" className="form-control" placeholder="Correo electrónico" />
+                  <input 
+                    type="email" 
+                    name="email"
+                    className="form-control" 
+                    placeholder="Correo electrónico" 
+                    required 
+                  />
                 </div>
-                <button className="btn btn-primary">Registrarse</button>
+                <button type="submit" className="btn btn-primary">Registrarse</button>
               </form>
             )}
           </div>
