@@ -1,4 +1,4 @@
-package com.d2i.dress2impress.controller;
+package com.d2i.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
