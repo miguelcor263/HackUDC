@@ -2,7 +2,6 @@ package com.d2i;
 
 import com.d2i.controller.ProductController;
 import com.d2i.model.User;
-import com.d2i.model.Favorite;
 import com.d2i.repository.FavoriteRepository;
 import com.d2i.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -10,7 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.List;
 
 @SpringBootApplication
 public class Dress2ImpressApplication {
@@ -34,7 +32,7 @@ public class Dress2ImpressApplication {
 			user = userRepository.save(user);  // Guardar usuario
 
 			// Llamar al método del controlador para guardar productos desde la API
-			String imageUrl = "https://example.com/sample-image.jpg"; // URL de prueba
+			String imageUrl = "https://static.zara.net/assets/public/7264/1cb1/3be84524adca/326063186123/08491054800-p/08491054800-p.jpg"; // URL de prueba
 			productController.saveProducts(imageUrl);
 		};
 	}

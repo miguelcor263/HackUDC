@@ -23,6 +23,9 @@ public class Product {
     private Double price;
 
     @Column(nullable = false)
+    private String url;
+
+    @Column(nullable = false)
     private String brand;
 
 }

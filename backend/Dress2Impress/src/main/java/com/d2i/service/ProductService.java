@@ -41,6 +41,7 @@ public class ProductService {
             Product product = new Product();
             product.setName(dto.getName());
             product.setPrice(currentPrice);
+            product.setUrl(dto.getLink());
             product.setBrand(dto.getBrand());
 
             products.add(product);
