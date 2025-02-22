@@ -1,56 +1,53 @@
 package com.d2i.service;
 
-import com.d2i.model.Product;
+import com.d2i.model.Favorite;
 import com.d2i.model.User;
-import com.d2i.repository.ProductRepository;
+import com.d2i.model.Product;
+import com.d2i.repository.FavoriteRepository;
 import com.d2i.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import com.d2i.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FavoriteService {
-    private final UserRepository userRepository;
-    private final ProductRepository productRepository;
 
-    public FavoriteService(UserRepository userRepository, ProductRepository productRepository) {
-        this.userRepository = userRepository;
-        this.productRepository = productRepository;
-    }
+    @Autowired
+    private FavoriteRepository favoriteRepository;
 
-    @Transactional
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
     public void addFavorite(Long userId, Long productId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        Optional<Product> productOptional = productRepository.findById(productId);
+        // Recupera el usuario y el producto desde sus respectivos repositorios
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (userOptional.isPresent() && productOptional.isPresent()) {
-            User user = userOptional.get();
-            Product product = productOptional.get();
-            user.getFavorites().add(product);
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("User or Product not found");
-        }
+        // Crea un nuevo objeto Favorite
+        Favorite favorite = new Favorite();
+        favorite.setUser(user);
+        favorite.setProduct(product);
+
+        // Guarda el objeto Favorite en la base de datos
+        favoriteRepository.save(favorite);
     }
 
-    @Transactional
-    public void removeFavorite(Long userId, Long productId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        Optional<Product> productOptional = productRepository.findById(productId);
+    // Método para obtener los productos favoritos de un usuario
+    public List<Product> getFavoritesByUserId(Long userId) {
+        // Obtiene la lista de productos favoritos de un usuario
+        List<Favorite> favorites = favoriteRepository.findByUserId(userId);
 
-        if (userOptional.isPresent() && productOptional.isPresent()) {
-            User user = userOptional.get();
-            Product product = productOptional.get();
-            user.getFavorites().remove(product);
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("User or Product not found");
-        }
-    }
-
-    public List<Product> getUserFavorites(Long userId) {
-        return userRepository.findById(userId).map(User::getFavorites).orElseThrow(() -> new RuntimeException("User not found"));
+        // Extrae los productos de la lista de favoritos y los devuelve
+        return favorites.stream()
+                .map(Favorite::getProduct)  // Obtiene el producto de cada favorito
+                .collect(Collectors.toList()); // Devuelve una lista de productos
     }
 }

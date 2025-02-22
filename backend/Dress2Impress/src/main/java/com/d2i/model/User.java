@@ -32,6 +32,6 @@ public class User {
     private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Product> favorites = new ArrayList<>();
+    private List<Favorite> favorites = new ArrayList<>();
 
 }

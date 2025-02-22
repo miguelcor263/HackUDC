@@ -2,6 +2,8 @@ package com.d2i;
 
 import com.d2i.model.Product;
 import com.d2i.model.User;
+import com.d2i.model.Favorite;
+import com.d2i.repository.FavoriteRepository;
 import com.d2i.repository.ProductRepository;
 import com.d2i.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -18,7 +20,7 @@ public class Dress2ImpressApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demoData(UserRepository userRepository, ProductRepository productRepository) {
+	public CommandLineRunner demoData(UserRepository userRepository, ProductRepository productRepository, FavoriteRepository favoriteRepository) {
 		return args -> {
 			// Crear usuario y guardarlo primero
 			User user = new User();
@@ -35,13 +37,14 @@ public class Dress2ImpressApplication {
 			product.setBrand("zara");
 			product = productRepository.save(product);  // Guardar producto
 
-			// Agregar el producto a la lista de favoritos del usuario
-			user.getFavorites().add(product);
-			userRepository.save(user);  // Guardar la relación en la base de datos
+      Favorite favorites = new Favorite();
+      favorites.setUser(user);
+      favorites.setProduct(product);
+      favorites = favoriteRepository.save(favorites);  // Guardar favorito
 
 			// Mostrar en consola los favoritos del usuario
-			List<Product> favorites = userRepository.findById(user.getId()).get().getFavorites();
-			System.out.println("Favoritos de " + user.getUsername() + ": " + favorites);
+      List<Favorite> favorites_list = user.getFavorites();  // Esto es correcto
+			System.out.println("Favoritos de " + user.getUsername() + ": " + favorites_list);
 		};
 	}
 }
