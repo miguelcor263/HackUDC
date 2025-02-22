@@ -48,10 +48,15 @@ body, html {
 
 .app-title {
   font-size: 24px;
-  font-weight: bold;
+  font-weight: normal; /* Default font weight */
   text-align: left;
   flex-grow: 1;
   overflow: hidden; /* Evitar desbordamiento */
+}
+
+/* Nueva regla para "dress2" */
+.app-title span.dress2 {
+  font-weight: bold;
 }
 
 .navbar {
@@ -173,9 +178,11 @@ button[type="submit"] {
 }
 
 .icon {
-  font-size: 24px;
-  margin-left: 15px;  /* Espacio entre los iconos */
+  font-size: 28px;
+  margin-right: 10px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .icon:hover {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaHeart } from "react-icons/fa"; 
-import logo from '../images/logo_inditextech.jpeg';
 import "./Products.css";
 
 export default function Products() {
@@ -48,7 +47,6 @@ export default function Products() {
     <div className="products-container">
       <div className="products-header">
         <h1>Productos Similares</h1>
-        <img src={logo} alt="Logo" className="logo" />
       </div>
 
       <div className="products-grid">

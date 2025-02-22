@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaHeart, FaUser } from "react-icons/fa"; 
 import "./Home.css";
-import logo from '../images/logo_inditextech.jpeg';
+import video from "../images/stradi_video.mp4";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
@@ -18,32 +18,36 @@ export default function Home() {
 
   const sendImageToBackend = async (url) => {
     try {
-        console.log("Sending URL to backend:", url);
+        console.log("Enviando URL al backend:", url);
+        const requestBody = { imageUrl: url }; // Send the raw URL, let backend handle encoding
+        
         const response = await fetch("http://localhost:8080/api/products/saveProducts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({ imageUrl: url })
+            body: JSON.stringify(requestBody)
         });
 
-        console.log("Response status:", response.status);
-        const data = await response.text(); // Cambiado de response.json() para ver el texto completo
-        console.log("Response data:", data);
-
-        if (response.ok) {
-            const products = JSON.parse(data);
-            console.log("Products received:", products);
-            alert("Productos guardados exitosamente");
-            navigate('/products', { state: { products } });
-        } else {
-            console.error("Error response:", data);
-            alert("Error al procesar la imagen: " + data);
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error del servidor:", errorText);
+            throw new Error(`Error del servidor: ${response.status}`);
         }
+
+        const data = await response.json();
+        console.log("Productos encontrados:", data);
+        
+        if (data && data.length > 0) {
+            navigate('/products', { state: { products: data } });
+        } else {
+            alert("No se encontraron productos similares");
+        }
+        
     } catch (error) {
-        console.error("Error completo:", error);
-        alert("Error en la conexión con el servidor: " + error.message);
+        console.error("Error:", error);
+        alert("Error al procesar la imagen. Por favor, intenta con otra URL.");
     }
   };
 
@@ -97,10 +101,11 @@ export default function Home() {
     <div className="container">
       {/* Navbar */}
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1 className="app-title">DRESS2 IMPRESS</h1>
-        <img src={logo} alt="Logo" className="logo" style={{ width: "20%", height: "auto" }} />
+        <div class="app-title">
+          <span class="dress2">DRESS2</span> IMPRESS
+        </div>
         <div className="d-flex align-items-center">
-          <FaHeart className="icon me-3" size={24} onClick={handleHeartClick} />
+          <FaHeart className="icon me-3" size={28} onClick={handleHeartClick} />
           {!isLoggedIn ? (
             <button className="btn btn-outline-dark btn-login" onClick={() => setShowLoginForm(true)}>
               Iniciar sesión
@@ -115,7 +120,7 @@ export default function Home() {
 
       {/* Video de fondo */}
       <video width="100%" autoPlay muted loop>
-        <source src="images/stradi_video.mp4" type="video/mp4" />
+        <source src={video} type="video/mp4" />
         Tu navegador no soporta el video.
       </video>
 

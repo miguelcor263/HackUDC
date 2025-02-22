@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -23,15 +23,24 @@ public class ProductController {
     @PostMapping("/saveProducts")
     public ResponseEntity<?> saveProducts(@RequestBody ImageUrlRequest request) {
         try {
-            System.out.println("Received request with URL: " + request.getImageUrl());
+            if (request == null || request.getImageUrl() == null) {
+                return ResponseEntity.badRequest().body("URL de imagen no proporcionada");
+            }
+            
+            System.out.println("URL recibida: " + request.getImageUrl());
             List<Product> savedProducts = productService.saveProductsFromAPI(request.getImageUrl());
-            System.out.println("Saved products: " + savedProducts.size());
-            return ResponseEntity.ok(savedProducts);
+            
+            if (savedProducts.isEmpty()) {
+                return ResponseEntity.ok().body("No se encontraron productos para guardar");
+            }
+            
+            System.out.println("Productos guardados: " + savedProducts.size());
+            return ResponseEntity.ok().body(savedProducts);
+            
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Error processing request: " + e.getMessage());
-            return ResponseEntity.badRequest()
-                .body("Error processing image: " + e.getMessage());
+            return ResponseEntity.internalServerError()
+                .body("Error interno del servidor: " + e.getMessage());
         }
     }
 
