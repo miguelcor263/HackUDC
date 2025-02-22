@@ -1,8 +1,6 @@
 package com.d2i.controller;
 
-import com.d2i.model.Favorite;
 import com.d2i.model.Product;
-import com.d2i.repository.FavoriteRepository;
 import com.d2i.service.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

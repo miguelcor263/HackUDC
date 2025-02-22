@@ -5,8 +5,6 @@ import com.d2i.ApiClientOkHttp;
 import com.d2i.dto.ProductDto;
 import com.d2i.model.Product;
 import com.d2i.repository.ProductRepository;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import org.springframework.stereotype.Service;
 
@@ -14,6 +12,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -27,7 +26,7 @@ public class ProductService {
 
     public void saveProductsFromAPI(String imageUrl) {
         // Llamar a la API y obtener la respuesta en formato JSON
-        String jsonResponse = ApiClientOkHttp.getApiResponse(imageUrl, 1, 10);
+        String jsonResponse = ApiClientOkHttp.getApiResponse(imageUrl, null, null);
 
         // Convertir el JSON a una lista de ProductDto
         ProductDto[] productsDto = gson.fromJson(jsonResponse, ProductDto[].class);
@@ -49,5 +48,19 @@ public class ProductService {
 
         // Guardar los productos en la base de datos
         productRepository.saveAll(products);
+    }
+    // Recuperar todos los productos
+    public List<Product> getAllProducts() {
+      return productRepository.findAll();
+    }
+    // Recuperar productos dentro de un rango de IDs
+    public List<Product> getProductsInRange(Long startId, Long endId) {
+      return productRepository.findByIdBetween(startId, endId);
+    }
+
+    // Recuperar un único producto por ID
+    public Product getProductById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        return product.orElse(null); // Si no existe el producto, retorna null
     }
 }
