@@ -65,15 +65,15 @@ body, html {
 .app-title {
   font-size: 24px;
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   flex-grow: 1;
-  margin-left: 10px;
 }
 /* Logo INDITEX en la parte superior izquierda */
 .logo {
   margin-right: 20px;
   width: auto; /* Ajusta el tamaño del logo */
   height: 4.5em;
+  text-align: center;
 } 
 /* Estilo para la barra superior */
 .top-bar {
@@ -105,7 +105,7 @@ body, html {
 
 /* Estilo para el contenedor principal */
 .container {
-  margin-top: 300px; /* Deja espacio para la barra superior */
+  margin-top: 100px; /* Deja espacio para la barra superior */
   text-align: center;
 }
 
@@ -113,7 +113,7 @@ body, html {
 .upload-btn {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #007BFF;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 5px;

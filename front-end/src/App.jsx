@@ -109,11 +109,12 @@ export default function App() {
     <div className="container">
       {/* Barra superior */}
       <div className="navbar">
+        {/* Título de la aplicación */}
+        <h1 className="app-title">DRESS2 IMPRESS</h1>
+
         {/* Logo en la izquierda */}
         <img src={logo} alt="Logo" className="logo" />
         
-        {/* Título de la aplicación */}
-        <h1 className="app-title">DRESS2 IMPRESS</h1>
 
         {/* Iconos a la derecha */}
         <div className="icons">
@@ -130,6 +131,11 @@ export default function App() {
           </div>
         </div>
       </div>
+      <video width="90%" autoPlay muted loop>
+        <source src="images/stradi_video.mp4" type="video/mp4" />
+        Tu navegador no soporta el video.
+      </video>
+
 
       <h2>Subir Imagen 📸</h2>
 
@@ -161,22 +167,22 @@ export default function App() {
       {/* Modal para elegir opción */}
       {showPrompt && (
         <div className="modal">
-          <div className="modal-content">
-            <h2>Selecciona una opción</h2>
-            <div className="buttons">
-              <label className="option-btn">
-                <FaUpload size={20} /> Subir desde galería
-                <input type="file" accept="image/*" onChange={uploadImage} hidden />
-              </label>
-              <button className="option-btn" onClick={openCamera}>
-                <FaCamera size={20} /> Abrir cámara
-              </button>
-            </div>
-            <button className="close-btn" onClick={() => setShowPrompt(false)}>
-              Cerrar
+        <div className="modal-content">
+          <h2>Selecciona una opción</h2>
+          <div className="buttons">
+            <label className="option-btn">
+              <FaUpload size={20} /> Subir desde galería
+              <input type="file" accept="image/*" onChange={uploadImage} hidden />
+            </label>
+            <button className="option-btn" onClick={openCamera}>
+              <FaCamera size={20} /> Abrir cámara
             </button>
           </div>
+          <button className="close-btn" onClick={() => setShowPrompt(false)}>
+            Cerrar
+          </button>
         </div>
+      </div>
       )}
 
       {/* Vista previa de la cámara */}
