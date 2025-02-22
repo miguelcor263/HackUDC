@@ -30,7 +30,7 @@ public class ProductService {
     public void saveProductsFromAPI(String imageUrl) throws IOException {
         // Llamar a la API y obtener la respuesta en formato JSON
         //String jsonResponse = ApiClientOkHttp.getApiResponse(imageUrl, null, null);
-        String jsonResponse = new String(Files.readAllBytes(Paths.get("../mock/GetApiResponse.json")));
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("/home/javier/Documentos/HackUDC/backend/Dress2Impress/src/main/java/com/d2i/mock/getApiResponse.json")));
         // Convertir el JSON a una lista de ProductDto
         ProductDto[] productsDto = gson.fromJson(jsonResponse, ProductDto[].class);
         List<Product> products = new ArrayList<>();

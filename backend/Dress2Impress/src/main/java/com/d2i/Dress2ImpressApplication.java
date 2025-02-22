@@ -46,11 +46,11 @@ public class Dress2ImpressApplication {
       System.out.println(productOne);
       List<Product> productAll = productController.getAllProducts();
       productAll.forEach(product -> System.out.println(product));
-      List<Product> productRange = productController.getProductsInRange(2L, 5L);
+      List<Product> productRange = productController.getProductsInRange(2L, 4L);
       productRange.forEach(product -> System.out.println(product));
 
 	    favoriteController.addFavorite(1L, 2L); 
-      favoriteController.addFavorite(1L, 5L);
+      favoriteController.addFavorite(1L, 3L);
       
       List<Product> favoriteList = favoriteController.getFavoritesByUserId(1L);
       favoriteList.forEach(product -> System.out.println(product));
