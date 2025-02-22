@@ -12,4 +12,5 @@ Currently, two official plugins are available:
 npm install
 npm install react-icons
 npm install react-router-dom
+npm install bootstrap
 npm run dev
