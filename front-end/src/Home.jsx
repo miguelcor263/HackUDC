@@ -1,121 +1,66 @@
-import React, { useState, useRef } from "react";
-import { FaCamera, FaUpload, FaHeart, FaTimes, FaUser } from "react-icons/fa"; 
+import React, { useState } from "react";
+import { FaHeart, FaUser } from "react-icons/fa"; 
 import "./Home.css";
 import logo from '../images/logo_inditextech.jpeg';
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [showPrompt, setShowPrompt] = useState(false);
-  const [image, setImage] = useState(null);
-  const [showCamera, setShowCamera] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
+  const [imageURL, setImageURL] = useState("");
   const [userName, setUserName] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState({ name: "", password: "" });
   const [showLoginForm, setShowLoginForm] = useState(false);
-  const [activeTab, setActiveTab] = useState('login'); // Estado para manejar la pestaña activa (login o registro)
-
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const streamRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('login');
 
   const navigate = useNavigate();
 
-  const openCamera = async () => {
+  const sendImageToBackend = async (url) => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-      setShowCamera(true);
-      setShowPrompt(false);
+        const response = await fetch(`http://localhost:5000/api/products/saveProducts?imageUrl=${encodeURIComponent(url)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.text(); // El backend devuelve un mensaje en texto
+
+        if (response.ok) {
+            console.log("Productos guardados en la base de datos:", data);
+            alert("Productos guardados exitosamente.");
+        } else {
+            console.error("Error al procesar la imagen:", data);
+            alert("Hubo un error al guardar los productos.");
+        }
     } catch (error) {
-      console.error("Error al acceder a la cámara:", error);
-      alert("No se pudo acceder a la cámara.");
+        console.error("Error al enviar la imagen al backend:", error);
+        alert("Error en la conexión con el servidor.");
     }
   };
 
-  const captureImage = () => {
-    if (videoRef.current && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-
-      const imageUrl = canvas.toDataURL("image/png");
-      setImage(imageUrl);
-      setShowImageModal(true);
-    }
-
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-    }
-    setShowCamera(false);
-  };
-
-  const sendImageToBackend = async (imageData) => {
-    try {
-      const response = await fetch('http://localhost:5000/upload-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: imageData }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Productos encontrados:", data.products);
-        // Aquí, agrega los productos a la base de datos local o al estado
+  const handleURLSubmit = () => {
+      if (imageURL.trim() !== "") {
+          sendImageToBackend(imageURL);
+          setShowPrompt(false);
+          setImageURL("");
       } else {
-        console.error("Error al procesar la imagen:", data.message);
+          alert("Por favor, introduce una URL válida.");
       }
-    } catch (error) {
-      console.error("Error al enviar la imagen al backend:", error);
-    }
   };
 
-  const uploadImage = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImage(URL.createObjectURL(file));
-      setShowImageModal(true);
-    }
-    setShowPrompt(false);
-  };
-
-  const confirmImage = () => {
-    sendImageToBackend(image);
-    setShowImageModal(false);
-    navigate("/products");  // Redirige a productos
-  };
-
-  const cancelImage = () => {
-    setImage(null);
-    setShowImageModal(false);
-  };
 
   const handleHeartClick = () => alert("¡Te gusta la aplicación!");
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
-  const handleUserClick = () => {
-    setDrawerOpen(true); 
-  };
+  const handleUserClick = () => setDrawerOpen(true);
 
   const handleCloseDrawer = () => {
     const drawerContent = document.querySelector('.drawer');
-  
-    // Añadir la clase "hide" para aplicar el efecto de desvanecimiento
-    if (drawerContent) {
-      drawerContent.classList.add('hide');
-    }
+    if (drawerContent) drawerContent.classList.add('hide');
 
-    // Esperar a que termine la transición (500ms) antes de cerrar el estado
     setTimeout(() => {
       setDrawerOpen(false);
     }, 500);
@@ -133,40 +78,13 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    const loginBubble = document.querySelector('.login-bubble');
-    const drawerContent = document.querySelector('.drawer');
-    
-    if (loginBubble) {
-      loginBubble.classList.add('hide');
-    }
-    
-    if (drawerContent) {
-      drawerContent.classList.add('hide');
-    }
-
-    setTimeout(() => {
-      setIsLoggedIn(false);
-      setUserData({ name: "", password: "" });
-      setUserName("");
-      setDrawerOpen(false); // Cerrar el drawer si es necesario
-    }, 500); 
+    setIsLoggedIn(false);
+    setUserData({ name: "", password: "" });
+    setUserName("");
+    setDrawerOpen(false);
   };
 
-  const closeLoginForm = () => {
-    const loginBubble = document.querySelector('.login-bubble');
-    if (loginBubble) {
-      loginBubble.classList.add('hide');
-    }
-    setTimeout(() => {
-      setShowLoginForm(false);
-      setUserData({ name: "", password: "" });
-    }, 500); 
-  };
-
-  // Cambiar entre Login y Registro
-  const switchTab = (tab) => {
-    setActiveTab(tab);
-  };
+  const switchTab = (tab) => setActiveTab(tab);
 
   return (
     <div className="container">
@@ -181,11 +99,9 @@ export default function Home() {
               Iniciar sesión
             </button>
           ) : (
-            <div>
-              <button className="btn btn-outline-dark" onClick={handleUserClick}>
-                <FaUser size={20}></FaUser>
-              </button>
-            </div>
+            <button className="btn btn-outline-dark" onClick={handleUserClick}>
+              <FaUser size={20} />
+            </button>
           )}
         </div>
       </div>
@@ -196,52 +112,27 @@ export default function Home() {
         Tu navegador no soporta el video.
       </video>
 
-      {/* Sección de carga de imagen */}
+      {/* Sección de carga de imagen por URL */}
       <div className="text-center my-4">
-        {/*<h2>Subir Imagen</h2>
-        <p>Sube una imagen o usa la cámara para buscar productos similares.</p>*/}
         <button className="btn btn-dark btn-lg" onClick={() => setShowPrompt(true)}>
-          Subir Imagen
+          Ingresar URL de Imagen
         </button>
       </div>
 
-      {/* Modal para elegir opción */}
+      {/* Modal para ingresar URL */}
       {showPrompt && (
         <div className="modal">
           <div className="modal-content text-center">
-            <h2>Selecciona una opción</h2>
-            <div className="d-flex justify-content-center">
-              <label className="btn btn-outline-primary me-3">
-                <FaUpload size={20} /> Subir desde galería
-                <input type="file" accept="image/*" onChange={uploadImage} hidden />
-              </label>
-              <button className="btn btn-primary" onClick={openCamera}>
-                <FaCamera size={20} /> Abrir cámara
-              </button>
-            </div>
-            <button className="btn btn-secondary mt-3" onClick={() => setShowPrompt(false)}>Cerrar</button>
-          </div>
-        </div>
-      )}
-
-      {/* Vista previa de la cámara */}
-      {showCamera && (
-        <div className="camera-container">
-          <video ref={videoRef} autoPlay className="video-preview"></video>
-          <button className="btn btn-danger mt-3" onClick={captureImage}>Capturar</button>
-        </div>
-      )}
-
-      {/* Vista previa de la imagen subida o capturada */}
-      {showImageModal && image && (
-        <div className="image-modal">
-          <div className="image-modal-content">
-            <h3>Imagen seleccionada:</h3>
-            <img src={image} alt="Previsualización" className="img-fluid" />
-            <div className="confirm-button mt-3">
-              <button className="btn btn-outline-primary me-3" onClick={confirmImage}>Aceptar</button>
-              <button className="btn btn-outline-primary" onClick={cancelImage}>Cancelar</button>
-            </div>
+            <h2>Introduce la URL de la imagen</h2>
+            <input 
+              type="text"
+              className="form-control mt-3"
+              placeholder="Pega aquí la URL de la imagen"
+              value={imageURL}
+              onChange={(e) => setImageURL(e.target.value)}
+            />
+            <button className="btn btn-primary mt-3" onClick={handleURLSubmit}>Enviar</button>
+            <button className="btn btn-secondary mt-2" onClick={() => setShowPrompt(false)}>Cerrar</button>
           </div>
         </div>
       )}
@@ -260,14 +151,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Canvas oculto para capturar imagen */}
-      <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-
       {/* Formulario de inicio de sesión y registro */}
       {showLoginForm && (
         <div className="login-bubble">
           <div className="login-bubble-content">
-            {/* Pestañas de login y registro */}
             <div className="tab-buttons">
               <button className={`tab-button ${activeTab === 'login' ? 'active' : ''}`} onClick={() => switchTab('login')}>
                 Iniciar sesión
@@ -277,7 +164,6 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Formulario de login */}
             {activeTab === 'login' && (
               <form onSubmit={handleLogin}>
                 <div className="mb-3">
@@ -301,13 +187,12 @@ export default function Home() {
                   />
                 </div>
                 <div className="d-flex justify-content-between">
-                  <button type="submit" className="btn btn-primary me-3" onClick={closeLoginForm}>Iniciar sesión</button>
-                  <button type="button" className="btn btn-secondary" onClick={closeLoginForm}>Cancelar</button>
+                  <button type="submit" className="btn btn-primary me-3">Iniciar sesión</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowLoginForm(false)}>Cancelar</button>
                 </div>
               </form>
             )}
 
-            {/* Formulario de registro */}
             {activeTab === 'register' && (
               <form>
                 <div className="mb-3">
@@ -318,9 +203,6 @@ export default function Home() {
                 </div>
                 <div className="mb-3">
                   <input type="email" className="form-control" placeholder="Correo electrónico" />
-                </div>
-                <div className="mb-3">
-                  <input type="city" className="form-control" placeholder="Ciudad" />
                 </div>
                 <button className="btn btn-primary">Registrarse</button>
               </form>
