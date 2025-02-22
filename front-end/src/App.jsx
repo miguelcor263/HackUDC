@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { FaCamera, FaUpload } from "react-icons/fa";
+import { FaCamera, FaUpload, FaHeart } from "react-icons/fa"; 
 import "./App.css";
 import logo from '../images/logo_inditextech.jpeg';
 
@@ -7,12 +7,12 @@ export default function App() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [image, setImage] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [imageConfirmed, setImageConfirmed] = useState(false); // Nuevo estado
+  const [imageConfirmed, setImageConfirmed] = useState(false);
+  const [userName, setUserName] = useState("AI"); // Iniciales del usuario
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
 
-  // Función para abrir la cámara
   const openCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -32,7 +32,6 @@ export default function App() {
     }
   };
 
-  // Función para capturar la imagen desde la cámara
   const captureImage = () => {
     if (!videoRef.current || !canvasRef.current) {
       console.error("No se encontró el video o el canvas.");
@@ -56,7 +55,7 @@ export default function App() {
 
     if (imageUrl) {
       setImage(imageUrl);
-      setImageConfirmed(false); // Permitir confirmación
+      setImageConfirmed(false);
     } else {
       console.error("Error al generar la imagen.");
     }
@@ -69,36 +68,66 @@ export default function App() {
     setShowCamera(false);
   };
 
-  // Función para subir imagen desde la galería
   const uploadImage = (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
-      setImageConfirmed(false); // Permitir confirmación
+      setImageConfirmed(false);
     }
     setShowPrompt(false);
   };
 
-  // Función para aceptar la imagen seleccionada
   const confirmImage = () => {
     setImageConfirmed(true);
     alert("Imagen confirmada correctamente.");
   };
 
-  // Función para cancelar la selección de imagen
   const cancelImage = () => {
     setImage(null);
     setImageConfirmed(false);
   };
 
+  const handleHeartClick = () => {
+    alert("¡Te gusta la aplicación!");
+  };
+
+  const handleUserClick = () => {
+    alert("Has hecho clic en las iniciales del usuario");
+  };
+
   return (
     <div className="container">
-      {/* Logo */}
-      <img src={logo} alt="Logo" className="logo" />
+      {/* Barra superior */}
+      <div className="navbar">
+        {/* Logo en la izquierda */}
+        <img src={logo} alt="Logo" className="logo" />
+        
+        {/* Título de la aplicación */}
+        <h1 className="app-title">DRESS2 IMPRESS</h1>
 
-      <h1>Subir Imagen 📸</h1>
-      <p>Sube una imagen desde tu galería o toma una foto con tu cámara.</p>
+        {/* Iconos a la derecha */}
+        <div className="icons">
+          <FaHeart 
+            size={24} 
+            className="icon" 
+            onClick={handleHeartClick} 
+          />
+          <div 
+            className="icon user-icon" 
+            onClick={handleUserClick}
+          >
+            {userName}
+          </div>
+        </div>
+      </div>
+
+      <h2>Subir Imagen 📸</h2>
+
+      <p>
+        Aquí puedes subir una imagen desde tu galería o tomar una foto con tu cámara. 
+        Usa el botón de abajo para elegir cómo deseas subir tu imagen.
+      </p>
 
       {/* Botón para abrir el prompt */}
       <button className="upload-btn" onClick={() => setShowPrompt(true)}>
@@ -133,6 +162,7 @@ export default function App() {
           <button className="capture-btn" onClick={captureImage}>Capturar</button>
         </div>
       )}
+
 
       {/* Vista previa de la imagen capturada o subida */}
       {image && (
