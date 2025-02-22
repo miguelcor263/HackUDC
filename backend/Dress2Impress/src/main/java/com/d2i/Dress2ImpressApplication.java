@@ -21,6 +21,7 @@ public class Dress2ImpressApplication {
 			// Crear usuario y guardarlo primero
 			User user = new User();
 			user.setUsername("pablo");
+      user.setPassword("1234");
 			user.setEmail("pablo@example.com");
 			user.setRole("admin");
 			user = userRepository.save(user);  // Guardar usuario
