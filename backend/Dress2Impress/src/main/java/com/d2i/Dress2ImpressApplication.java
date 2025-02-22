@@ -1,10 +1,9 @@
 package com.d2i;
 
-import com.d2i.model.Product;
+import com.d2i.controller.ProductController;
 import com.d2i.model.User;
 import com.d2i.model.Favorite;
 import com.d2i.repository.FavoriteRepository;
-import com.d2i.repository.ProductRepository;
 import com.d2i.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +19,11 @@ public class Dress2ImpressApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demoData(UserRepository userRepository, ProductRepository productRepository, FavoriteRepository favoriteRepository) {
+	public CommandLineRunner demoData(
+			UserRepository userRepository,
+			FavoriteRepository favoriteRepository,
+			ProductController productController // Inyectamos el controlador
+	) {
 		return args -> {
 			// Crear usuario y guardarlo primero
 			User user = new User();
@@ -30,21 +33,9 @@ public class Dress2ImpressApplication {
 			user.setRole("admin");
 			user = userRepository.save(user);  // Guardar usuario
 
-			// Crear producto y guardarlo
-			Product product = new Product();
-			product.setName("GEOMETRIC JACQUARD SHIRT");
-			product.setPrice(29.95);
-			product.setBrand("zara");
-			product = productRepository.save(product);  // Guardar producto
-
-      Favorite favorites = new Favorite();
-      favorites.setUser(user);
-      favorites.setProduct(product);
-      favorites = favoriteRepository.save(favorites);  // Guardar favorito
-
-			// Mostrar en consola los favoritos del usuario
-      List<Favorite> favorites_list = user.getFavorites();  // Esto es correcto
-			System.out.println("Favoritos de " + user.getUsername() + ": " + favorites_list);
+			// Llamar al método del controlador para guardar productos desde la API
+			String imageUrl = "https://example.com/sample-image.jpg"; // URL de prueba
+			productController.saveProducts(imageUrl);
 		};
 	}
 }
