@@ -62,4 +62,8 @@ public class ProductService {
         Optional<Product> product = productRepository.findById(id);
         return product.orElse(null); // Si no existe el producto, retorna null
     }
+
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
+    }
 }

@@ -79,4 +79,14 @@ public class ProductController {
         }
         return products;
     }
+
+    @DeleteMapping("/clear")
+    public ResponseEntity<Void> clearProducts() {
+        try {
+            productService.deleteAllProducts();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

@@ -49,11 +49,31 @@ export default function Products() {
     });
   };
 
-  const handleBack = () => {
-    navigate('/home', { 
-      state: userState,
-      replace: true 
-    });
+  const handleBack = async () => {
+    try {
+      // Limpiar la base de datos de productos
+      const response = await fetch('http://localhost:8080/api/products/clear', {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        console.error('Error clearing products database');
+      }
+
+      // Navegar a la página de inicio
+      navigate('/', {
+        state: {
+          isLoggedIn: location.state?.isLoggedIn,
+          userId: location.state?.userId,
+          userName: location.state?.userName,
+          userEmail: location.state?.userEmail
+        }
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      // Navegar aunque haya error
+      navigate('/');
+    }
   };
 
   return (
