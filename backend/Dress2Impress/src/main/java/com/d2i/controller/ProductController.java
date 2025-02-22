@@ -6,7 +6,6 @@ import com.d2i.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
