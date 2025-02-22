@@ -1,5 +1,5 @@
 # HackUDC
-Repositorio para el proyecto de HackUDC
+Repo for HackUDC project.
 
 # DRESS2 IMPRESS
 
@@ -46,64 +46,66 @@ NOTE: read REQUIREMENTS for info about specific commands.
 1. **User signs in or signs up**
 2. **Upload an image** from its url.
 3. **The system analizes the image** and finds similar products.
-4. **Explorar productos favoritos** en la sección correspondiente.
-5. **Gestionar perfil de usuario** a través del drawer lateral.
+4. **Explore favorite products**.
+5. **Manage user profile** through the lateral drawer.
 
 ---
 
 ## ✅ What works? What doesn’t work?
-### **Funcionalidades que funcionan:**
-✔️ Subida de imágenes desde la galería o la cámara.
-✔️ Interfaz de usuario con Bootstrap.
-✔️ Gestión de usuarios con autenticación básica.
-✔️ Lista de productos favoritos.
-✔️ Comunicación entre frontend y backend.
+### **Working functionalities:**
+✔️ Upload of images through the url
+✔️ User interface with Bootstrap
+✔️ User management through basic authentication.
+✔️ Favorite products list.
+✔️ Frontend and backend communication.
 
-### **Aspectos a mejorar:**
-❌ Implementación de un modelo de IA para análisis avanzado de imágenes.
-❌ Mejoras en el sistema de autenticación.
-❌ Optimización del rendimiento en consultas a la base de datos.
+### **Things to do:**
+❌ Show your favorites list.
+❌ Offer the possibility of changing user data.
+❌ Visual interface in products screen.
 
 ---
 
 ## ❓ Where can I ask if I’ve found an issue or troubles?
-Si encuentras un problema, puedes:
-- Crear un **Issue** en el repositorio de GitHub.
-- Contactar con los desarrolladores en el canal de soporte de Discord.
+If you encounter a problem, you can:
+- Create an **Issue** in GitHub repository.
+- Contact with developers.
 
 ---
 
 ## 🚀 How can I contribute?
-1. **Haz un fork** del repositorio.
-2. Crea una nueva rama con:
+1. **Do a fork** of the repo.
+2. Create a new branch:
    ```sh
    git checkout -b feature/nueva-funcionalidad
    ```
-3. Realiza cambios y confírmalos:
+3. Make changes and confirm them:
    ```sh
-   git commit -m "Añadida nueva funcionalidad"
+   git commit -m "New functionality"
    ```
-4. Sube tus cambios:
+4. Upload your changes:
    ```sh
-   git push origin feature/nueva-funcionalidad
+   git push origin feature/new-functionality
    ```
-5. Crea un **Pull Request** en GitHub.
+5. Create a **Pull Request** on GitHub.
 
 ---
 
 ## 👨‍💻 Who has contributed?
-- **Equipo de HackUDC**
-- [Tu Nombre o GitHub]
-- [Otro Colaborador]
+- **HackUDC TEAM**
+- Miguel Cortón Debén: miguelcor263
+- Pablo Legide Vidal: plegide
+- Javier Rodríguez Rodríguez: javier-r-r
+- Aldara Iglesias Sánchez: aldara-iglesias
 
-Si deseas aparecer en esta sección, ¡haz tu contribución! 🎉
+If you want to appear in this section, do your contribution! 🎉
 
 ---
 
 ## 📜 What license does it have?
-Este proyecto está bajo la **Licencia MIT**. Puedes usarlo, modificarlo y distribuirlo libremente, siempre y cuando incluyas la atribución a los desarrolladores originales.
+This project is under free license. You can use it, modify it and distribute it freely, as long as you give credits to the original developers.
 
 ---
 
-### 🚀 ¡Gracias por ser parte de DRESS2 IMPRESS! 💙
+### 🚀 Thanks to be part of DRESS2 IMPRESS! 💙
 

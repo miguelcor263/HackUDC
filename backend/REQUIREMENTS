@@ -6,6 +6,8 @@ npm install react-router-dom
 npm install bootstrap
 npm run dev
 
+sudo apt install maven
+
 TO EXECUTE AND RUN THE APPLICATION:
 (for the backend - Spring Boot)
 (mvn clean install)
