@@ -18,25 +18,32 @@ export default function Home() {
 
   const sendImageToBackend = async (url) => {
     try {
-        const response = await fetch(`http://localhost:5000/api/products/saveProducts?imageUrl=${encodeURIComponent(url)}`, {
-            method: 'POST',
+        console.log("Sending URL to backend:", url);
+        const response = await fetch("http://localhost:8080/api/products/saveProducts", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             },
+            body: JSON.stringify({ imageUrl: url })
         });
 
-        const data = await response.text(); // El backend devuelve un mensaje en texto
+        console.log("Response status:", response.status);
+        const data = await response.text(); // Cambiado de response.json() para ver el texto completo
+        console.log("Response data:", data);
 
         if (response.ok) {
-            console.log("Productos guardados en la base de datos:", data);
-            alert("Productos guardados exitosamente.");
+            const products = JSON.parse(data);
+            console.log("Products received:", products);
+            alert("Productos guardados exitosamente");
+            navigate('/products', { state: { products } });
         } else {
-            console.error("Error al procesar la imagen:", data);
-            alert("Hubo un error al guardar los productos.");
+            console.error("Error response:", data);
+            alert("Error al procesar la imagen: " + data);
         }
     } catch (error) {
-        console.error("Error al enviar la imagen al backend:", error);
-        alert("Error en la conexión con el servidor.");
+        console.error("Error completo:", error);
+        alert("Error en la conexión con el servidor: " + error.message);
     }
   };
 

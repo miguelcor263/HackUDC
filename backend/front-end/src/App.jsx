@@ -11,7 +11,6 @@ createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />  {/* Página de inicio */}
         <Route path="/home" element={<Home />} /> {/* Página de subir imágenes */}
         <Route path="/products" element={<Products />} /> {/* Página para visualizar productos */}
       </Routes>

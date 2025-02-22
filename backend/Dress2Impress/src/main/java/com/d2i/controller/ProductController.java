@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -21,15 +21,33 @@ public class ProductController {
     }
 
     @PostMapping("/saveProducts")
-    public ResponseEntity<String> saveProducts(@RequestParam String imageUrl) {
+    public ResponseEntity<?> saveProducts(@RequestBody ImageUrlRequest request) {
         try {
-          productService.saveProductsFromAPI(imageUrl);
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+            System.out.println("Received request with URL: " + request.getImageUrl());
+            List<Product> savedProducts = productService.saveProductsFromAPI(request.getImageUrl());
+            System.out.println("Saved products: " + savedProducts.size());
+            return ResponseEntity.ok(savedProducts);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error processing request: " + e.getMessage());
+            return ResponseEntity.badRequest()
+                .body("Error processing image: " + e.getMessage());
         }
-        return ResponseEntity.ok("Productos guardados en la base de datos.");
     }
+
+    // Add this class inside ProductController
+    public static class ImageUrlRequest {
+        private String imageUrl;
+        
+        public String getImageUrl() {
+            return imageUrl;
+        }
+        
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+    }
+
     // Método GET para recuperar todos los productos
     @GetMapping
     public List<Product> getAllProducts() {
@@ -39,12 +57,18 @@ public class ProductController {
     // Método GET para recuperar productos dentro de un rango de IDs
     @GetMapping("/productsRange")
     public List<Product> getProductsInRange(@RequestParam Long startId, @RequestParam(required = false) Long endId) {
-        if (endId != null) {
-            List<Product> products = productService.getProductsInRange(startId, endId);
-            return products;
+        System.out.println("Fetching products in range: startId=" + startId + ", endId=" + endId);
+        List<Product> products;
+        if (endId == null) {
+            products = productService.getProductsInRange(startId, Long.MAX_VALUE);
         } else {
-            Product product = productService.getProductById(startId);
-            return List.of(product);
+            products = productService.getProductsInRange(startId, endId);
         }
+        if (products == null) {
+            System.out.println("No products found in the specified range.");
+        } else {
+            System.out.println("Found " + products.size() + " products.");
+        }
+        return products;
     }
 }
