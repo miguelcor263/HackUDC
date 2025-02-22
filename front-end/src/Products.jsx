@@ -10,7 +10,8 @@ export default function Products() {
   const [favorites, setFavorites] = useState(new Set());
 
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products") // Reemplázalo con tu API real
+    // Cambiar la URL a tu backend real de Spring Boot
+    fetch("http://localhost:8080/api/products")  // Reemplázalo con la URL correcta de tu API
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -36,7 +37,6 @@ export default function Products() {
       {/* Encabezado con Logo e Icono de Favoritos */}
       <div className="products-header">
         <h1 className="app-title">DRESS2 IMPRESS</h1>
-        {/*<h2 className="products-title">Lista de Productos</h2>*/}
         <img src={logo} alt="Logo" className="logo" />
       </div>
 
@@ -61,3 +61,4 @@ export default function Products() {
     </div>
   );
 }
+

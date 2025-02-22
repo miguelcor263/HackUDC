@@ -57,6 +57,28 @@ export default function Home() {
     setShowCamera(false);
   };
 
+  const sendImageToBackend = async (imageData) => {
+    try {
+      const response = await fetch('http://localhost:5000/upload-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ image: imageData }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Productos encontrados:", data.products);
+        // Aquí, agrega los productos a la base de datos local o al estado
+      } else {
+        console.error("Error al procesar la imagen:", data.message);
+      }
+    } catch (error) {
+      console.error("Error al enviar la imagen al backend:", error);
+    }
+  };
+
   const uploadImage = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -67,6 +89,7 @@ export default function Home() {
   };
 
   const confirmImage = () => {
+    sendImageToBackend(image);
     setShowImageModal(false);
     navigate("/products");  // Redirige a productos
   };
