@@ -432,19 +432,16 @@ button[type="submit"]:hover {
 }
 
 .tab-button {
-  background-color: transparent;
-  border: 2px solid #007bff; /* Borde del botón */
-  color: #007bff; /* Color del texto */
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 25px;
-  transition: all 0.3s ease;
+  background-color: white !important;
+  border: 2px solid black !important;
+  color: black !important;
+  border-radius: 4px !important;
 }
 
-.tab-button:hover {
-  background-color: #007bff;
-  color: white; /* Cambiar color de texto al pasar el ratón */
+.tab-button:hover, .tab-button.active {
+  background-color: black !important;
+  color: white !important;
+  border-color: black !important;
 }
 
 .tab-button.active {
@@ -456,4 +453,59 @@ button[type="submit"]:hover {
 
 .tab-button:focus {
   outline: none; /* Elimina el borde azul del foco */
+}
+
+/* Estilos para los botones */
+.btn-primary {
+  background-color: black !important;
+  border-color: black !important;
+  color: white !important;
+  border-radius: 4px !important;
+}
+
+.btn-primary:hover {
+  background-color: #333 !important;
+  border-color: #333 !important;
+}
+
+.btn-secondary {
+  background-color: white !important;
+  border-color: black !important;
+  color: black !important;
+  border-radius: 4px !important;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f0f0 !important;
+  border-color: #333 !important;
+  color: #333 !important;
+}
+
+.btn-warning {
+  background-color: black !important;
+  border-color: black !important;
+  color: white !important;
+  border-radius: 4px !important;
+}
+
+.btn-warning:hover {
+  background-color: #333 !important;
+  border-color: #333 !important;
+}
+
+.btn-dark {
+  background-color: black !important;
+  border-color: black !important;
+  border-radius: 4px !important;
+}
+
+.btn-outline-dark {
+  border-color: black !important;
+  color: black !important;
+  border-radius: 4px !important;
+}
+
+.btn-outline-dark:hover {
+  background-color: black !important;
+  color: white !important;
 }

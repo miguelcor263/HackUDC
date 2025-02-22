@@ -8,6 +8,7 @@ export default function Home() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [imageURL, setImageURL] = useState("");
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState(""); // Añadir estado para email
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState({ name: "", password: "" });
@@ -18,7 +19,7 @@ export default function Home() {
 
   const sendImageToBackend = async (url) => {
     try {
-        console.log("Enviando URL al backend:", url);
+        console.log("Sending URL to backend:", url);
         const requestBody = { imageUrl: url }; // Send the raw URL, let backend handle encoding
         
         const response = await fetch("http://localhost:8080/api/products/saveProducts", {
@@ -32,22 +33,22 @@ export default function Home() {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("Error del servidor:", errorText);
-            throw new Error(`Error del servidor: ${response.status}`);
+            console.error("Server error:", errorText);
+            throw new Error(`Server error: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("Productos encontrados:", data);
+        console.log("Products found:", data);
         
         if (data && data.length > 0) {
             navigate('/products', { state: { products: data } });
         } else {
-            alert("No se encontraron productos similares");
+            alert("No similar products found");
         }
         
     } catch (error) {
         console.error("Error:", error);
-        alert("Error al procesar la imagen. Por favor, intenta con otra URL.");
+        alert("Error processing the image. Please try another URL.");
     }
   };
 
@@ -57,12 +58,12 @@ export default function Home() {
           setShowPrompt(false);
           setImageURL("");
       } else {
-          alert("Por favor, introduce una URL válida.");
+          alert("Please enter a valid URL.");
       }
   };
 
 
-  const handleHeartClick = () => alert("¡Te gusta la aplicación!");
+  const handleHeartClick = () => alert("You like the app!");
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
@@ -77,14 +78,32 @@ export default function Home() {
     }, 500);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (userData.password === "123") {
-      setIsLoggedIn(true);
-      setShowLoginForm(false);
-      setUserName(userData.name);
-    } else {
-      alert("Contraseña incorrecta");
+    try {
+      const response = await fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: userData.name,
+          password: userData.password
+        })
+      });
+
+      if (response.ok) {
+        const user = await response.json();
+        setIsLoggedIn(true);
+        setShowLoginForm(false);
+        setUserName(user.username);
+        setUserEmail(user.email); // Guardar el email del usuario
+      } else {
+        alert("Invalid username or password");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Login error");
     }
   };
 
@@ -113,15 +132,15 @@ export default function Home() {
       });
 
       if (response.ok) {
-        alert("Registro exitoso");
+        alert("Registration successful");
         setActiveTab('login');
       } else {
         const error = await response.text();
-        alert("Error en el registro: " + error);
+        alert("Registration error: " + error);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Error en el registro");
+      alert("Registration error");
     }
   };
 
@@ -136,7 +155,7 @@ export default function Home() {
           <FaHeart className="icon me-3" size={28} onClick={handleHeartClick} />
           {!isLoggedIn ? (
             <button className="btn btn-outline-dark btn-login" onClick={() => setShowLoginForm(true)}>
-              Iniciar sesión
+              Sign In
             </button>
           ) : (
             <button className="btn btn-outline-dark" onClick={handleUserClick}>
@@ -146,61 +165,60 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Video de fondo */}
+      {/* Background Video */}
       <video width="100%" autoPlay muted loop>
         <source src={video} type="video/mp4" />
-        Tu navegador no soporta el video.
+        Your browser does not support video playback.
       </video>
 
-      {/* Sección de carga de imagen por URL */}
+      {/* Image URL upload section */}
       <div className="text-center my-4">
         <button className="btn btn-dark btn-lg" onClick={() => setShowPrompt(true)}>
-          Ingresar URL de Imagen
+          Enter Image URL
         </button>
       </div>
 
-      {/* Modal para ingresar URL */}
+      {/* URL input modal */}
       {showPrompt && (
         <div className="modal">
           <div className="modal-content text-center">
-            <h2>Introduce la URL de la imagen</h2>
+            <h2>Enter Image URL</h2>
             <input 
               type="text"
               className="form-control mt-3"
-              placeholder="Pega aquí la URL de la imagen"
+              placeholder="Paste image URL here"
               value={imageURL}
               onChange={(e) => setImageURL(e.target.value)}
             />
-            <button className="btn btn-primary mt-3" onClick={handleURLSubmit}>Enviar</button>
-            <button className="btn btn-secondary mt-2" onClick={() => setShowPrompt(false)}>Cerrar</button>
+            <button className="btn btn-primary mt-3" onClick={handleURLSubmit}>Submit</button>
+            <button className="btn btn-secondary mt-2" onClick={() => setShowPrompt(false)}>Close</button>
           </div>
         </div>
       )}
 
-      {/* Drawer usuario */}
+      {/* User drawer */}
       {drawerOpen && isLoggedIn && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
           <div className="drawer-content">
             <button className="btn-close" onClick={handleCloseDrawer}></button>
-            <h2>Información del Usuario</h2>
-            <p><strong>Nombre:</strong> {userName}</p>
-            <p><strong>Email:</strong> usuario@dominio.com</p>
-            <p><strong>Ubicación:</strong> Ciudad, País</p>
-            <button className="btn btn-warning" onClick={handleLogout}>Cerrar Sesión</button>
+            <h2>User Information</h2>
+            <p><strong>Name:</strong> {userName}</p>
+            <p><strong>Email:</strong> {userEmail}</p>
+            <button className="btn btn-warning" onClick={handleLogout}>Sign Out</button>
           </div>
         </div>
       )}
 
-      {/* Formulario de inicio de sesión y registro */}
+      {/* Login and registration form */}
       {showLoginForm && (
         <div className="login-bubble">
           <div className="login-bubble-content">
             <div className="tab-buttons">
               <button className={`tab-button ${activeTab === 'login' ? 'active' : ''}`} onClick={() => switchTab('login')}>
-                Iniciar sesión
+                Sign In
               </button>
               <button className={`tab-button ${activeTab === 'register' ? 'active' : ''}`} onClick={() => switchTab('register')}>
-                Registro
+                Register
               </button>
             </div>
 
@@ -210,7 +228,7 @@ export default function Home() {
                   <input 
                     type="text" 
                     className="form-control" 
-                    placeholder="Nombre de usuario" 
+                    placeholder="Username" 
                     value={userData.name} 
                     onChange={(e) => setUserData({ ...userData, name: e.target.value })} 
                     required 
@@ -220,15 +238,15 @@ export default function Home() {
                   <input 
                     type="password" 
                     className="form-control" 
-                    placeholder="Contraseña" 
+                    placeholder="Password" 
                     value={userData.password} 
                     onChange={(e) => setUserData({ ...userData, password: e.target.value })} 
                     required 
                   />
                 </div>
                 <div className="d-flex justify-content-between">
-                  <button type="submit" className="btn btn-primary me-3">Iniciar sesión</button>
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowLoginForm(false)}>Cancelar</button>
+                  <button type="submit" className="btn btn-primary me-3">Sign In</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowLoginForm(false)}>Cancel</button>
                 </div>
               </form>
             )}
@@ -240,7 +258,7 @@ export default function Home() {
                     type="text" 
                     name="username"
                     className="form-control" 
-                    placeholder="Nombre de usuario" 
+                    placeholder="Username" 
                     required 
                   />
                 </div>
@@ -249,7 +267,7 @@ export default function Home() {
                     type="password" 
                     name="password"
                     className="form-control" 
-                    placeholder="Contraseña" 
+                    placeholder="Password" 
                     required 
                   />
                 </div>
@@ -258,11 +276,11 @@ export default function Home() {
                     type="email" 
                     name="email"
                     className="form-control" 
-                    placeholder="Correo electrónico" 
+                    placeholder="Email" 
                     required 
                   />
                 </div>
-                <button type="submit" className="btn btn-primary">Registrarse</button>
+                <button type="submit" className="btn btn-primary">Sign Up</button>
               </form>
             )}
           </div>
