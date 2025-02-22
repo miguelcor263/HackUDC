@@ -1,32 +1,34 @@
-import { useState, useRef } from "react";
-import { FaCamera, FaUpload, FaHeart } from "react-icons/fa"; 
+import React, { useState, useRef } from "react";
+import { FaCamera, FaUpload, FaHeart, FaTimes, FaUser } from "react-icons/fa"; 
 import "./Home.css";
 import logo from '../images/logo_inditextech.jpeg';
 import { useNavigate } from "react-router-dom";
 
-export default function App() {
+export default function Home() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [image, setImage] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [imageConfirmed, setImageConfirmed] = useState(false);
-  const [userName, setUserName] = useState("AI"); // Iniciales del usuario
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({ name: "", password: "" });
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [activeTab, setActiveTab] = useState('login'); // Estado para manejar la pestaña activa (login o registro)
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);  // Estado para controlar la visibilidad del drawer
 
-  const navigate = useNavigate(); // Crea una instancia de navigate
+  const navigate = useNavigate();
 
   const openCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       streamRef.current = stream;
-
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current.play();
-        };
+        videoRef.current.play();
       }
       setShowCamera(true);
       setShowPrompt(false);
@@ -37,151 +39,164 @@ export default function App() {
   };
 
   const captureImage = () => {
-    if (!videoRef.current || !canvasRef.current) {
-      console.error("No se encontró el video o el canvas.");
-      return;
-    }
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
 
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
-      console.error("El video no está listo para capturar.");
-      return;
-    }
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const imageUrl = canvas.toDataURL("image/png");
-
-    if (imageUrl) {
+      const imageUrl = canvas.toDataURL("image/png");
       setImage(imageUrl);
-      setImageConfirmed(false);
-    } else {
-      console.error("Error al generar la imagen.");
+      setShowImageModal(true);
     }
 
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
     }
-
     setShowCamera(false);
   };
 
   const uploadImage = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-      setImageConfirmed(false);
+      setImage(URL.createObjectURL(file));
+      setShowImageModal(true);
     }
     setShowPrompt(false);
   };
 
   const confirmImage = () => {
-    setImageConfirmed(true);
-    alert("Imagen confirmada correctamente.");
-    navigate("/products");  // Redirige a la página de Products
+    setShowImageModal(false);
+    navigate("/products");  // Redirige a productos
   };
 
   const cancelImage = () => {
     setImage(null);
-    setImageConfirmed(false);
+    setShowImageModal(false);
   };
 
-  const handleHeartClick = () => {
-    alert("¡Te gusta la aplicación!");
-  };
+  const handleHeartClick = () => alert("¡Te gusta la aplicación!");
+
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
   const handleUserClick = () => {
-    setDrawerOpen(true);
+    setDrawerOpen(true); 
   };
+
   const handleCloseDrawer = () => {
-    setDrawerOpen(false);  // Cerrar el drawer
+    const drawerContent = document.querySelector('.drawer');
+  
+    // Añadir la clase "hide" para aplicar el efecto de desvanecimiento
+    if (drawerContent) {
+      drawerContent.classList.add('hide');
+    }
+
+    // Esperar a que termine la transición (500ms) antes de cerrar el estado
+    setTimeout(() => {
+      setDrawerOpen(false);
+    }, 500);
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (userData.password === "123") {
+      setIsLoggedIn(true);
+      setShowLoginForm(false);
+      setUserName(userData.name);
+    } else {
+      alert("Contraseña incorrecta");
+    }
   };
 
   const handleLogout = () => {
-    alert("Has cerrado sesión");
-    // Aquí podrías manejar la lógica de cierre de sesión
+    const loginBubble = document.querySelector('.login-bubble');
+    const drawerContent = document.querySelector('.drawer');
+    
+    if (loginBubble) {
+      loginBubble.classList.add('hide');
+    }
+    
+    if (drawerContent) {
+      drawerContent.classList.add('hide');
+    }
+
+    setTimeout(() => {
+      setIsLoggedIn(false);
+      setUserData({ name: "", password: "" });
+      setUserName("");
+      setDrawerOpen(false); // Cerrar el drawer si es necesario
+    }, 500); 
+  };
+
+  const closeLoginForm = () => {
+    const loginBubble = document.querySelector('.login-bubble');
+    if (loginBubble) {
+      loginBubble.classList.add('hide');
+    }
+    setTimeout(() => {
+      setShowLoginForm(false);
+      setUserData({ name: "", password: "" });
+    }, 500); 
+  };
+
+  // Cambiar entre Login y Registro
+  const switchTab = (tab) => {
+    setActiveTab(tab);
   };
 
   return (
     <div className="container">
-      {/* Barra superior */}
-      <div className="navbar">
-        {/* Título de la aplicación */}
+      {/* Navbar */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <h1 className="app-title">DRESS2 IMPRESS</h1>
-
-        {/* Logo en la izquierda */}
-        <img src={logo} alt="Logo" className="logo" />
-        
-        {/* Iconos a la derecha */}
-        <div className="icons">
-          <FaHeart 
-            size={24} 
-            className="icon" 
-            onClick={handleHeartClick} 
-          />
-          <div 
-            className="icon user-icon" 
-            onClick={handleUserClick}
-          >
-            {userName}
-          </div>
+        <img src={logo} alt="Logo" className="logo" style={{ width: "20%", height: "auto" }} />
+        <div className="d-flex align-items-center">
+          <FaHeart className="icon me-3" size={24} onClick={handleHeartClick} />
+          {!isLoggedIn ? (
+            <button className="btn btn-outline-dark btn-login" onClick={() => setShowLoginForm(true)}>
+              Iniciar sesión
+            </button>
+          ) : (
+            <div>
+              <button className="btn btn-outline-dark" onClick={handleUserClick}>
+                <FaUser size={20}></FaUser>
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      <video width="90%" autoPlay muted loop>
+
+      {/* Video de fondo */}
+      <video width="100%" autoPlay muted loop>
         <source src="images/stradi_video.mp4" type="video/mp4" />
         Tu navegador no soporta el video.
       </video>
 
-      <h2>Subir Imagen 📸</h2>
-
-      <p>
-        Aquí puedes subir una imagen desde tu galería o tomar una foto con tu cámara. 
-        Usa el botón de abajo para elegir cómo deseas subir tu imagen.
-      </p>
-
-      {/* Botón para abrir el prompt */}
-      <button className="upload-btn" onClick={() => setShowPrompt(true)}>
-        Subir Imagen
-      </button>
-      {/* Drawer con la información del usuario */}
-      {/* Drawer con la información del usuario */}
-      {drawerOpen && (
-        <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
-          <div className="drawer-content">
-            <button className="close-drawer-btn" onClick={handleCloseDrawer}>✕</button>
-            <h2>Información del Usuario</h2>
-            <p><strong>Nombre:</strong> {userName}</p>
-            <p><strong>Email:</strong> usuario@dominio.com</p>
-            <p><strong>Ubicación:</strong> Ciudad, País</p>
-            <button className="logout-btn" onClick={handleLogout}>Cerrar Sesión</button>
-          </div>
-        </div>
-      )}
+      {/* Sección de carga de imagen */}
+      <div className="text-center my-4">
+        {/*<h2>Subir Imagen</h2>
+        <p>Sube una imagen o usa la cámara para buscar productos similares.</p>*/}
+        <button className="btn btn-dark btn-lg" onClick={() => setShowPrompt(true)}>
+          Subir Imagen
+        </button>
+      </div>
 
       {/* Modal para elegir opción */}
       {showPrompt && (
         <div className="modal">
-          <div className="modal-content">
+          <div className="modal-content text-center">
             <h2>Selecciona una opción</h2>
-            <div className="buttons">
-              <label className="btn btn-primary mt-3 me-3">
+            <div className="d-flex justify-content-center">
+              <label className="btn btn-outline-primary me-3">
                 <FaUpload size={20} /> Subir desde galería
                 <input type="file" accept="image/*" onChange={uploadImage} hidden />
               </label>
-              <button className="btn btn-primary mt-3 me-3" onClick={openCamera}>
+              <button className="btn btn-primary" onClick={openCamera}>
                 <FaCamera size={20} /> Abrir cámara
               </button>
             </div>
-            <button className="close-btn" onClick={() => setShowPrompt(false)}>
-              Cerrar
-            </button>
+            <button className="btn btn-secondary mt-3" onClick={() => setShowPrompt(false)}>Cerrar</button>
           </div>
         </div>
       )}
@@ -190,29 +205,106 @@ export default function App() {
       {showCamera && (
         <div className="camera-container">
           <video ref={videoRef} autoPlay className="video-preview"></video>
-          <button className="capture-btn" onClick={captureImage}>Capturar</button>
+          <button className="btn btn-danger mt-3" onClick={captureImage}>Capturar</button>
         </div>
       )}
 
-
-      {/* Vista previa de la imagen capturada o subida */}
-      {image && (
-        <div className="image-preview">
-          <h3>Imagen seleccionada:</h3>
-          <img src={image} alt="Imagen Capturada" />
-
-          {/* Botones de aceptar y cancelar */}
-          {!imageConfirmed && (
-            <div className="image-actions">
-              <button className="btn btn-primary mt-3 me-3" onClick={confirmImage}>Aceptar</button>
-              <button className="btn btn-secondary mt-3" onClick={cancelImage}>Cancelar</button>
+      {/* Vista previa de la imagen subida o capturada */}
+      {showImageModal && image && (
+        <div className="image-modal">
+          <div className="image-modal-content">
+            <h3>Imagen seleccionada:</h3>
+            <img src={image} alt="Previsualización" className="img-fluid" />
+            <div className="confirm-button mt-3">
+              <button className="btn btn-outline-primary me-3" onClick={confirmImage}>Aceptar</button>
+              <button className="btn btn-outline-primary" onClick={cancelImage}>Cancelar</button>
             </div>
-          )}
+          </div>
         </div>
       )}
 
-      {/* Canvas oculto para capturar la imagen */}
+      {/* Drawer usuario */}
+      {drawerOpen && isLoggedIn && (
+        <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
+          <div className="drawer-content">
+            <button className="btn-close" onClick={handleCloseDrawer}></button>
+            <h2>Información del Usuario</h2>
+            <p><strong>Nombre:</strong> {userName}</p>
+            <p><strong>Email:</strong> usuario@dominio.com</p>
+            <p><strong>Ubicación:</strong> Ciudad, País</p>
+            <button className="btn btn-warning" onClick={handleLogout}>Cerrar Sesión</button>
+          </div>
+        </div>
+      )}
+
+      {/* Canvas oculto para capturar imagen */}
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+
+      {/* Formulario de inicio de sesión y registro */}
+      {showLoginForm && (
+        <div className="login-bubble">
+          <div className="login-bubble-content">
+            {/* Pestañas de login y registro */}
+            <div className="tab-buttons">
+              <button className={`tab-button ${activeTab === 'login' ? 'active' : ''}`} onClick={() => switchTab('login')}>
+                Iniciar sesión
+              </button>
+              <button className={`tab-button ${activeTab === 'register' ? 'active' : ''}`} onClick={() => switchTab('register')}>
+                Registro
+              </button>
+            </div>
+
+            {/* Formulario de login */}
+            {activeTab === 'login' && (
+              <form onSubmit={handleLogin}>
+                <div className="mb-3">
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Nombre de usuario" 
+                    value={userData.name} 
+                    onChange={(e) => setUserData({ ...userData, name: e.target.value })} 
+                    required 
+                  />
+                </div>
+                <div className="mb-3">
+                  <input 
+                    type="password" 
+                    className="form-control" 
+                    placeholder="Contraseña" 
+                    value={userData.password} 
+                    onChange={(e) => setUserData({ ...userData, password: e.target.value })} 
+                    required 
+                  />
+                </div>
+                <div className="d-flex justify-content-between">
+                  <button type="submit" className="btn btn-primary me-3" onClick={closeLoginForm}>Iniciar sesión</button>
+                  <button type="button" className="btn btn-secondary" onClick={closeLoginForm}>Cancelar</button>
+                </div>
+              </form>
+            )}
+
+            {/* Formulario de registro */}
+            {activeTab === 'register' && (
+              <form>
+                <div className="mb-3">
+                  <input type="text" className="form-control" placeholder="Nombre de usuario" />
+                </div>
+                <div className="mb-3">
+                  <input type="password" className="form-control" placeholder="Contraseña" />
+                </div>
+                <div className="mb-3">
+                  <input type="email" className="form-control" placeholder="Correo electrónico" />
+                </div>
+                <div className="mb-3">
+                  <input type="city" className="form-control" placeholder="Ciudad" />
+                </div>
+                <button className="btn btn-primary">Registrarse</button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
