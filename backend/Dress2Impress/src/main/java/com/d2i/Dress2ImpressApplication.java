@@ -9,6 +9,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class Dress2ImpressApplication {
 	public static void main(String[] args) {
@@ -21,20 +23,25 @@ public class Dress2ImpressApplication {
 			// Crear usuario y guardarlo primero
 			User user = new User();
 			user.setUsername("pablo");
-      user.setPassword("1234");
+			user.setPassword("1234");
 			user.setEmail("pablo@example.com");
 			user.setRole("admin");
 			user = userRepository.save(user);  // Guardar usuario
 
-			// Crear producto
+			// Crear producto y guardarlo
 			Product product = new Product();
 			product.setName("GEOMETRIC JACQUARD SHIRT");
 			product.setPrice(29.95);
 			product.setBrand("zara");
-			product.setUser(user); // Asignar usuario al producto
+			product = productRepository.save(product);  // Guardar producto
 
-			// Guardar producto
-			productRepository.save(product);
+			// Agregar el producto a la lista de favoritos del usuario
+			user.getFavorites().add(product);
+			userRepository.save(user);  // Guardar la relación en la base de datos
+
+			// Mostrar en consola los favoritos del usuario
+			List<Product> favorites = userRepository.findById(user.getId()).get().getFavorites();
+			System.out.println("Favoritos de " + user.getUsername() + ": " + favorites);
 		};
 	}
 }

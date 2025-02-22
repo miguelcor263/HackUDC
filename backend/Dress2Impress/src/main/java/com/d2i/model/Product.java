@@ -25,8 +25,4 @@ public class Product {
     @Column(nullable = false)
     private String brand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
 }

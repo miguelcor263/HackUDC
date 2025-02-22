@@ -31,7 +31,7 @@ public class User {
     // Ejemplo de un campo adicional
     private String role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Product> favorites = new ArrayList<>();
 
 }
