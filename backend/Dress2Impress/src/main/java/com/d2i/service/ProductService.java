@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +27,10 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public void saveProductsFromAPI(String imageUrl) {
+    public void saveProductsFromAPI(String imageUrl) throws IOException {
         // Llamar a la API y obtener la respuesta en formato JSON
-        String jsonResponse = ApiClientOkHttp.getApiResponse(imageUrl, null, null);
-
+        //String jsonResponse = ApiClientOkHttp.getApiResponse(imageUrl, null, null);
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("../mock/GetApiResponse.json")));
         // Convertir el JSON a una lista de ProductDto
         ProductDto[] productsDto = gson.fromJson(jsonResponse, ProductDto[].class);
         List<Product> products = new ArrayList<>();

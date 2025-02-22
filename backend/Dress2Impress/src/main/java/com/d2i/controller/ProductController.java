@@ -6,6 +6,7 @@ import com.d2i.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,7 +22,12 @@ public class ProductController {
 
     @PostMapping("/saveProducts")
     public ResponseEntity<String> saveProducts(@RequestParam String imageUrl) {
-        productService.saveProductsFromAPI(imageUrl);
+        try {
+          productService.saveProductsFromAPI(imageUrl);
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
         return ResponseEntity.ok("Productos guardados en la base de datos.");
     }
     // Método GET para recuperar todos los productos
