@@ -103,7 +103,7 @@ If you want to appear in this section, do your contribution! 🎉
 ---
 
 ## 📜 What license does it have?
-This project is under apache 2.0 license. You can find more information in the [LICENSE] (https://github.com/usuario/repositorio/blob/main/archivo.md) file.
+This project is under apache 2.0 license. You can find more information in the [LICENSE] (https://github.com/miguelcor263/HackUDC/blob/main/LICENSE) file.
 
 ---
 
