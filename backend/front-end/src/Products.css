@@ -1,75 +1,67 @@
 .products-container {
-    padding: 0px;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 .products-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.logo {
-    width: 200px;
-}
-
-.products-title {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: left;
-}
-
-.loading, .error {
-    font-size: 18px;
-    color: red;
+  margin-bottom: 20px;
 }
 
 .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    justify-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
 }
 
 .product-card {
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 220px;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .product-image {
-    width: 100%;
-    height: 150px;
-    object-fit: contain;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
-.product-title {
-    font-size: 16px;
-    margin: 10px 0;
+.product-info {
+  text-align: center;
 }
 
-.product-price {
-    font-size: 18px;
-    font-weight: bold;
-    color: #28a745;
+.product-info h3 {
+  font-size: 1.5em;
+  margin: 10px 0;
 }
 
-/* Botón de favoritos */
+.product-info .price {
+  font-size: 1.2em;
+  color: #333;
+}
+
+.product-info .brand {
+  font-size: 1em;
+  color: #666;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 .favorite-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-.favorite-btn:hover {
-    transform: scale(1.2);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
