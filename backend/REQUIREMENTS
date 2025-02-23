@@ -1,0 +1,16 @@
+OPEN YOUR TERMINAL AND WRITE:
+
+npm install
+npm install react-icons
+npm install react-router-dom
+npm install bootstrap
+npm run dev
+
+sudo apt install maven
+
+TO EXECUTE AND RUN THE APPLICATION:
+(for the backend - Spring Boot)
+(mvn clean install)
+mvn spring-boot:run
+(for the frontend - React)
+npm run dev
